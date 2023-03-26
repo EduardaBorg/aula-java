@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.repository.ProductRepository;
 
 @RestController
 public class ProductController {
@@ -21,15 +20,18 @@ public class ProductController {
 
     @PutMapping("/products/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable(value = "id") Long productId, @RequestBody Product productDetails) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found for this id :: " + productId));
-
+        Product product = productRepository.findById(productId)
+           .orElseThrow();
+  
         product.setName(productDetails.getName());
         product.setDescription(productDetails.getDescription());
         product.setPrice(productDetails.getPrice());
-        product.setStock(productDetails.getStock());
+        product.setStockQuantity(productDetails.getStockQuantity());
+    
         final Product updatedProduct = productRepository.save(product);
         return ResponseEntity.ok(updatedProduct);
     }
+    
 
     @GetMapping("/products")
     public List<Product> getAllProducts() {
